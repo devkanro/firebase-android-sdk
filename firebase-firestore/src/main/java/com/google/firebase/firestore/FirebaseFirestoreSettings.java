@@ -19,6 +19,8 @@ import static com.google.firebase.firestore.util.Preconditions.checkNotNull;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import java.util.Objects;
+
 /** Settings used to configure a {@link FirebaseFirestore} instance. */
 public final class FirebaseFirestoreSettings {
   /**
@@ -39,6 +41,7 @@ public final class FirebaseFirestoreSettings {
     private boolean sslEnabled;
     private boolean persistenceEnabled;
     private long cacheSizeBytes;
+    private String proxy;
 
     /** Constructs a new {@code FirebaseFirestoreSettings} Builder object. */
     public Builder() {
@@ -46,6 +49,7 @@ public final class FirebaseFirestoreSettings {
       sslEnabled = true;
       persistenceEnabled = true;
       cacheSizeBytes = DEFAULT_CACHE_SIZE_BYTES;
+      proxy = null;
     }
 
     /**
@@ -58,6 +62,7 @@ public final class FirebaseFirestoreSettings {
       sslEnabled = settings.sslEnabled;
       persistenceEnabled = settings.persistenceEnabled;
       cacheSizeBytes = settings.cacheSizeBytes;
+      proxy = settings.proxy;
     }
 
     /**
@@ -81,6 +86,11 @@ public final class FirebaseFirestoreSettings {
     public Builder setSslEnabled(boolean value) {
       this.sslEnabled = value;
       return this;
+    }
+
+    public Builder setProxy(@Nullable String proxy) {
+        this.proxy = proxy;
+        return this;
     }
 
     /**
@@ -137,6 +147,10 @@ public final class FirebaseFirestoreSettings {
       return cacheSizeBytes;
     }
 
+    public String getProxy() {
+          return proxy;
+      }
+
     @NonNull
     public FirebaseFirestoreSettings build() {
       if (!this.sslEnabled && this.host.equals(DEFAULT_HOST)) {
@@ -151,6 +165,7 @@ public final class FirebaseFirestoreSettings {
   private final boolean sslEnabled;
   private final boolean persistenceEnabled;
   private final long cacheSizeBytes;
+  private final String proxy;
 
   /** Constructs a {@code FirebaseFirestoreSettings} object based on the values in the Builder. */
   private FirebaseFirestoreSettings(Builder builder) {
@@ -158,6 +173,7 @@ public final class FirebaseFirestoreSettings {
     sslEnabled = builder.sslEnabled;
     persistenceEnabled = builder.persistenceEnabled;
     cacheSizeBytes = builder.cacheSizeBytes;
+    proxy = builder.proxy;
   }
 
   @Override
@@ -173,7 +189,8 @@ public final class FirebaseFirestoreSettings {
     return host.equals(that.host)
         && sslEnabled == that.sslEnabled
         && persistenceEnabled == that.persistenceEnabled
-        && cacheSizeBytes == that.cacheSizeBytes;
+        && cacheSizeBytes == that.cacheSizeBytes
+        && Objects.equals(proxy, that.proxy);
   }
 
   @Override
@@ -182,6 +199,7 @@ public final class FirebaseFirestoreSettings {
     result = 31 * result + (sslEnabled ? 1 : 0);
     result = 31 * result + (persistenceEnabled ? 1 : 0);
     result = 31 * result + (int) cacheSizeBytes;
+    result = 31 * result + Objects.hash(proxy);
     return result;
   }
 
@@ -193,6 +211,8 @@ public final class FirebaseFirestoreSettings {
         + host
         + ", sslEnabled="
         + sslEnabled
+        + ", proxy="
+        + proxy
         + ", persistenceEnabled="
         + persistenceEnabled
         + ", cacheSizeBytes="
@@ -223,4 +243,8 @@ public final class FirebaseFirestoreSettings {
   public long getCacheSizeBytes() {
     return cacheSizeBytes;
   }
+
+  public String getProxy() {
+        return proxy;
+    }
 }

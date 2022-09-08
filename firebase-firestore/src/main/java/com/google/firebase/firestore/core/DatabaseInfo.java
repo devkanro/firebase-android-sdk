@@ -22,6 +22,7 @@ public final class DatabaseInfo {
   private final DatabaseId databaseId;
   private final String persistenceKey;
   private final String host;
+  private final String proxy;
   private final boolean sslEnabled;
 
   /**
@@ -34,11 +35,12 @@ public final class DatabaseInfo {
    * @param sslEnabled Whether to use SSL when connecting.
    */
   public DatabaseInfo(
-      DatabaseId databaseId, String persistenceKey, String host, boolean sslEnabled) {
+      DatabaseId databaseId, String persistenceKey, String host, boolean sslEnabled, String proxy) {
     this.databaseId = databaseId;
     this.persistenceKey = persistenceKey;
     this.host = host;
     this.sslEnabled = sslEnabled;
+    this.proxy = proxy;
   }
 
   public DatabaseId getDatabaseId() {
@@ -57,8 +59,12 @@ public final class DatabaseInfo {
     return sslEnabled;
   }
 
+  public String getProxy() {
+    return proxy;
+  }
+
   @Override
   public String toString() {
-    return "DatabaseInfo(databaseId:" + databaseId + " host:" + host + ")";
+    return "DatabaseInfo(databaseId:" + databaseId + " host:" + host + " proxy:" + proxy + ")";
   }
 }

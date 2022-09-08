@@ -28,14 +28,15 @@ import com.google.firebase.firestore.util.Executors;
 import com.google.firebase.firestore.util.Logger;
 import com.google.firebase.firestore.util.Supplier;
 import com.google.firestore.v1.FirestoreGrpc;
-import io.grpc.CallCredentials;
-import io.grpc.CallOptions;
-import io.grpc.ClientCall;
-import io.grpc.ConnectivityState;
-import io.grpc.ManagedChannel;
-import io.grpc.ManagedChannelBuilder;
-import io.grpc.MethodDescriptor;
+import io.grpc.*;
 import io.grpc.android.AndroidChannelBuilder;
+
+import javax.annotation.Nullable;
+import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.net.SocketAddress;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
@@ -101,6 +102,25 @@ public class GrpcCallProvider {
         // Note that the boolean flag does *NOT* switch the wire format from Protobuf to Plaintext.
         // It merely turns off SSL encryption.
         channelBuilder.usePlaintext();
+      }
+    }
+
+    if(databaseInfo.getProxy() != null) {
+      try {
+        URI proxy = new URI("http://" + databaseInfo.getProxy());
+        String host = proxy.getHost();
+        int port = proxy.getPort();
+        channelBuilder.proxyDetector(new ProxyDetector() {
+          @Override
+          public ProxiedSocketAddress proxyFor(SocketAddress targetServerAddress) throws IOException {
+            return HttpConnectProxiedSocketAddress.newBuilder()
+                    .setTargetAddress((InetSocketAddress)targetServerAddress)
+                    .setProxyAddress(InetSocketAddress.createUnresolved(host, port))
+                    .build();
+          }
+        });
+      } catch (URISyntaxException e) {
+        // Ignore
       }
     }
 
