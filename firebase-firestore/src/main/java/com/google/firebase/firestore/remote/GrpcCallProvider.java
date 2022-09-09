@@ -46,7 +46,7 @@ public class GrpcCallProvider {
 
   private static final String LOG_TAG = "GrpcCallProvider";
 
-  private static Supplier<ManagedChannelBuilder<?>> overrideChannelBuilderSupplier;
+  public static Supplier<ManagedChannelBuilder<?>> overrideChannelBuilderSupplier;
 
   private Task<ManagedChannel> channelTask;
   private final AsyncQueue asyncQueue;
@@ -115,7 +115,7 @@ public class GrpcCallProvider {
           public ProxiedSocketAddress proxyFor(SocketAddress targetServerAddress) throws IOException {
             return HttpConnectProxiedSocketAddress.newBuilder()
                     .setTargetAddress((InetSocketAddress)targetServerAddress)
-                    .setProxyAddress(InetSocketAddress.createUnresolved(host, port))
+                    .setProxyAddress(new InetSocketAddress(host, port))
                     .build();
           }
         });
